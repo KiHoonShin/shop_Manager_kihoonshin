@@ -3,23 +3,53 @@ package dao;
 import java.util.ArrayList;
 
 import Controller.ShopController;
+import Utils.FileManager;
 import vo.Cart;
 import vo.Item;
+import vo.User;
 
 public class ItemDAO {
 	ArrayList<Item> itemList;
 	ShopController shop = new ShopController();
+	FileManager fileManager = FileManager.getInstance();
 	ArrayList<Cart> cartList = new ArrayList<Cart>();
 	int cnt;
 	
 	public ItemDAO() {
 		itemList = new ArrayList<Item>();
+		roadItemFile();
+		roadCartFile();
 	}
 	
 	public static ItemDAO instance = new ItemDAO();
 	public static ItemDAO getInstance() {
 		return instance;
 	}
+	
+	// 아이템 파일 불러오기
+	private void roadItemFile() {
+		String data = fileManager.itemDataRoad();
+		String[] temp = data.split("\n");
+		for(int i = 0; i < temp.length; i++) {
+			String[] info = temp[i].split("/");
+			itemList.add(new Item(info[0], info[1], Integer.parseInt(info[2])));
+		}
+		cnt = itemList.size();
+	}
+	
+	// 장바구니 파일 불러오기
+	private void roadCartFile() {
+		int cnt = 0;
+		String data = fileManager.cartDataRoad();
+		String[] temp = data.split("\n");
+		cnt = temp.length;
+		if(cnt == 0) return;
+		for(int i = 0; i < temp.length; i++) {
+			String[] info = temp[i].split("/");
+			cartList.add(new Cart(info[0], info[1]));
+		}
+	}
+	
 	
 	public void plusCategory() {
 		System.out.println("[ 카테고리 추가 ]");
@@ -133,8 +163,22 @@ public class ItemDAO {
 	
 	// 전체 장바구니 품목 출력
 	public void printCart() {
+		int idx = 1;
 		for(Cart c : cartList) {
-			System.out.println(c);
+			System.out.printf("%d ) ",idx++);
+			System.out.print(c);
+			System.out.println();
+			System.out.println("---------------------");
+		}
+	}
+	// 전체 아이템 품목 출력
+	public void printItem() {
+		int idx = 1;
+		for(Item i : itemList) {
+			System.out.printf("%d ) ",idx++);
+			System.out.print(i);
+			System.out.println();
+			System.out.println("---------------------");
 		}
 	}
 	
@@ -225,6 +269,25 @@ public class ItemDAO {
 			}
 		}
 	}
+	
+	// 카트리스트 데이터로 변환
+	public String cartListToData() {
+		String data = "";
+		for(Cart c : cartList) {
+			data += c.getUserId()+"/"+c.getItemName()+"\n";
+		}
+		return data;
+	}
+	
+	// 아이템리스트 데이터로 변환
+	public String itemListToData() {
+		String data = "";
+		for(Item i : itemList) {
+			data += i.getCategory()+"/"+i.getName()+"/"+i.getPrice()+"\n";
+		}
+		return data;
+	}
+	
 	
 	
 }

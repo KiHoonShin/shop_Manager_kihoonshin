@@ -3,23 +3,38 @@ package dao;
 import java.util.ArrayList;
 
 import Controller.ShopController;
+import Utils.FileManager;
 import vo.User;
 
 public class UserDAO {
 	ArrayList<User> userList;
 	ShopController shop = new ShopController();
-	ItemDAO itemDAO = new ItemDAO();
+	ItemDAO itemDAO = ItemDAO.getInstance();
+	FileManager fileManager = FileManager.getInstance();
 	int cnt;
 	public UserDAO(){
 			userList = new ArrayList<User>();
-
+			roadUserFile();
 		}
 
 	public static UserDAO instance = new UserDAO();
 	public static UserDAO getInstance() {
 		return instance;
 	}
-
+	// 유저 파일 불러오기
+	private void roadUserFile() {
+		String data = fileManager.userDataRoad();
+		String[] temp = data.split("\n");
+		for(int i = 0; i < temp.length; i++) {
+			String[] info = temp[i].split("/");
+			userList.add(new User(info[1], info[2], info[0]));
+		}
+		cnt = userList.size();
+		
+	}
+	
+	
+	
 	public void plusUser() {
 		System.out.println("[ 회원 가입 ]");
 		String id = shop.getStr("id");
@@ -104,11 +119,35 @@ public class UserDAO {
 	private int isUser(String id) {
 		if(userList == null) return -1;
 		for(int i = 0; i < userList.size(); i++) {
-			if(userList.get(i).getId().equals(id)) {
+			if(userList.get(i).getName().equals(id)) {
 				return i;
 			}
 		}
 		return -1;
+	}
+	
+	// 유저리스트 data로 변환
+	public String userListToData() {
+		String data = "";
+		for(User u : userList) {
+			data += u.getName()+"/"+u.getId()+"/"+u.getPw()+"\n";
+		}
+		return data;
+	}
+	
+	// 유저 전체 출력
+	public void printUser() {
+		if(cnt == 0) {
+			System.out.println("등록된 회원이 없습니다.");
+			return;
+		}
+		int idx = 1;
+		for(User u : userList) {
+			System.out.printf("%d ) ",idx++);
+			System.out.print(u);
+			System.out.println();
+			System.out.println("-------------------------");
+		}
 	}
 	
 }

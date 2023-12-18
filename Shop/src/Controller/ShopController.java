@@ -18,10 +18,10 @@ public class ShopController {
 //		//sc= new Scanner(System.in);
 //		//userDAO.getInstance();
 //	}
-//	public static ShopController instance = new ShopController();
-//	public static ShopController getInstance() {
-//		return instance;
-//	}
+	public static ShopController instance = new ShopController();
+	public static ShopController getInstance() {
+		return instance;
+	}
 	// 	System.out.println("[1.가입] [2.탈퇴] [3.로그인] [4.로그아웃]" + "\n[100.관리자] [0.종료] ");  
 
 	// 	System.out.println("[1.쇼핑] [2.장바구니목록] [0.뒤로가기]");
@@ -30,6 +30,7 @@ public class ShopController {
 // 	System.out.println("[1.아이템관리] [2.카테고리관리] [3.장바구니관리] [4.유저관리] [0.뒤로가기] ");
 
 	public void run() {
+		// 파일 전체 로드
 		printMenu();
 	}
 	
@@ -66,7 +67,7 @@ public class ShopController {
 			int sel = sc.nextInt();
 			if(sel == 100) {
 				// 관리자 모드
-				inputManager.printManager(itemDAO);
+				inputManager.printManager(itemDAO , userDAO);
 			} else if (sel < 0 || sel > 4) {
 				System.out.println("범위 오류");
 				continue;
